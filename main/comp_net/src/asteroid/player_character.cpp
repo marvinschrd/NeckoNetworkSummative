@@ -27,81 +27,100 @@
 namespace neko::asteroid
 {
 
-PlayerCharacterManager::PlayerCharacterManager(EntityManager& entityManager, PhysicsManager& physicsManager, GameManager& gameManager) :
-    ComponentManager(entityManager),
-    physicsManager_(physicsManager),
-    gameManager_(gameManager)
-    
-{
+    PlayerCharacterManager::PlayerCharacterManager(EntityManager& entityManager, PhysicsManager& physicsManager, GameManager& gameManager) :
+        ComponentManager(entityManager),
+        physicsManager_(physicsManager),
+        gameManager_(gameManager)
 
-}
-
-void PlayerCharacterManager::FixedUpdate(seconds dt)
-{
-    for(Entity playerEntity = 0; playerEntity < entityManager_.get().GetEntitiesSize(); playerEntity++)
     {
-        if(!entityManager_.get().HasComponent(playerEntity, 
-            EntityMask(ComponentType::PLAYER_CHARACTER)))
-            continue;
-        auto playerBody = physicsManager_.get().GetBody(playerEntity);
-        auto playerCharacter = GetComponent(playerEntity);
-        const auto input = playerCharacter.input;
 
-        const bool right = input & PlayerInput::RIGHT;
-        const bool left = input & PlayerInput::LEFT;
-        const bool up = input & PlayerInput::UP;
-        const bool down = input & PlayerInput::DOWN;
+    }
+    bool canFly = true;
 
-        const auto angularVelocity = ((left ? 1.0f : 0.0f) + (right ? -1.0f : 0.0f)) * playerAngularSpeed;
-
-        playerBody.angularVelocity = angularVelocity;
-
-        auto dir = Vec2f::up;
-        dir = dir.Rotate(-(playerBody.rotation + playerBody.angularVelocity * dt.count()));
-
-        const auto acceleration = ((down ? -1.0f : 0.0f) + (up ? 1.0f : 0.0f)) * dir;
-
-
-        playerBody.velocity += acceleration * dt.count();
-
-        physicsManager_.get().SetBody(playerEntity, playerBody);
-
-        if(playerCharacter.invincibilityTime > 0.0f)
+    void PlayerCharacterManager::FixedUpdate(seconds dt)
+    {
+        for (Entity playerEntity = 0; playerEntity < entityManager_.get().GetEntitiesSize(); playerEntity++)
         {
-            playerCharacter.invincibilityTime -= dt.count();
-            SetComponent(playerEntity, playerCharacter);
-        }
-        //Check if cannot shoot, and increase shootingTime
-        if(playerCharacter.shootingTime < playerShootingPeriod)
-        {
-            playerCharacter.shootingTime += dt.count();
-            SetComponent(playerEntity, playerCharacter);
-        }
-        //Shooting mechanism
-        if (playerCharacter.shootingTime >= playerShootingPeriod)
-        {
-            if(input & PlayerInput::SHOOT)
+            if (!entityManager_.get().HasComponent(playerEntity,
+                EntityMask(ComponentType::PLAYER_CHARACTER)))
+                continue;
+            auto playerBody = physicsManager_.get().GetBody(playerEntity);
+            auto playerCharacter = GetComponent(playerEntity);
+            const auto input = playerCharacter.input;
+
+            const bool right = input & PlayerInput::RIGHT;
+            const bool left = input & PlayerInput::LEFT;
+            const bool up = input & PlayerInput::UP;
+            const bool down = input & PlayerInput::DOWN;
+
+            float jumpforce = 0.5f;
+            /*auto jump = Vec2f::up;
+            jump = Vec2f(playerBody.velocity.x, ((up ? 0.1f: -0.05f)));*/
+
+
+            //const auto angularVelocity = ((left ? 1.0f : 0.0f) + (right ? -1.0f : 0.0f)) * playerAngularSpeed;
+
+            //playerBody.angularVelocity = angularVelocity;
+
+           /* auto dir = Vec2f::up;
+            dir = dir.Rotate(-(playerBody.rotation + playerBody.angularVelocity * dt.count()));*/
+
+            /*auto dir = Vec2f();
+            dir = Vec2f(((left ? 0.2f : 0.0f) + (right ? -0.2f : 0.0f)), playerBody.velocity.y);*/
+
+            //  const auto acceleration = ((down ? -1.0f : 0.0f) + (up ? 1.0f : 0.0f)) * dir;
+              //const auto acceleration = ((left ? -1.0f : 0.0f) + (right ? 1.0f : 0.0f)) * dir ;
+
+            //  playerBody.velocity += acceleration * dt.count();
+
+            float jump = ((up ? 0.9f : -0.5f));
+            float dir = ((left ? 3.0f : 0.0f) + (right ? -3.0f : 0.0f));
+
+
+
+
+            // playerBody.velocity += dir * dt.count();
+            playerBody.velocity.y += jump;
+            playerBody.velocity.x += dir * dt.count();
+
+            physicsManager_.get().SetBody(playerEntity, playerBody);
+
+            if (playerCharacter.invincibilityTime > 0.0f)
             {
-                const auto currentPlayerSpeed = playerBody.velocity.Magnitude();
-                const auto bulletVelocity = dir * 
-                    ((Vec2f::Dot(playerBody.velocity, dir) > 0.0f ? currentPlayerSpeed : 0.0f)
-                    + bulletSpeed);
-                const auto bulletPosition = playerBody.position + dir * 0.5f + playerBody.velocity * dt.count();
-                gameManager_.get().SpawnBullet(playerCharacter.playerNumber,
-                                               bulletPosition,
-                                               bulletVelocity);
-                playerCharacter.shootingTime = 0.0f;
+                playerCharacter.invincibilityTime -= dt.count();
                 SetComponent(playerEntity, playerCharacter);
             }
+            //Check if cannot shoot, and increase shootingTime
+            if (playerCharacter.shootingTime < playerShootingPeriod)
+            {
+                playerCharacter.shootingTime += dt.count();
+                SetComponent(playerEntity, playerCharacter);
+            }
+            //Shooting mechanism
+           /* if (playerCharacter.shootingTime >= playerShootingPeriod)
+            {
+                if(input & PlayerInput::SHOOT)
+                {
+                    const auto currentPlayerSpeed = playerBody.velocity.Magnitude();
+                    const auto bulletVelocity = dir *
+                        ((Vec2f::Dot(playerBody.velocity, dir) > 0.0f ? currentPlayerSpeed : 0.0f)
+                        + bulletSpeed);
+                    const auto bulletPosition = playerBody.position + dir * 0.5f + playerBody.velocity * dt.count();
+                    gameManager_.get().SpawnBullet(playerCharacter.playerNumber,
+                                                   bulletPosition,
+                                                   bulletVelocity);
+                    playerCharacter.shootingTime = 0.0f;
+                    SetComponent(playerEntity, playerCharacter);
+                }
+            }*/
         }
     }
-}
 
-PlayerCharacterManager& PlayerCharacterManager::operator=(const PlayerCharacterManager& playerCharacterManager)
-{
-    gameManager_ = playerCharacterManager.gameManager_;
-    components_ = playerCharacterManager.components_;
-    //We do NOT copy the physics manager
-    return *this;
-}
+    PlayerCharacterManager& PlayerCharacterManager::operator=(const PlayerCharacterManager& playerCharacterManager)
+    {
+        gameManager_ = playerCharacterManager.gameManager_;
+        components_ = playerCharacterManager.components_;
+        //We do NOT copy the physics manager
+        return *this;
+    }
 }
