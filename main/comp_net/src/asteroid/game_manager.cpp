@@ -113,6 +113,19 @@ void GameManager::DestroyBullet(Entity entity)
     rollbackManager_.DestroyEntity(entity);
 }
 
+//Entity GameManager::SpawnPlatform(Vec2f position)
+//{
+//    const Entity entity = entityManager_.CreateEntity();
+//    entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::PLATFORM));
+//    transformManager_.AddComponent(entity);
+//    transformManager_.SetPosition(entity, position);
+//    transformManager_.SetScale(entity, Vec2f::one * platformScale);
+//    transformManager_.SetRotation(entity, degree_t(0.0f));
+//    transformManager_.UpdateDirtyComponent(entity);
+//    rollbackManager_.SpawnPlatorm(entity, position);
+//}
+
+	
 net::PlayerNumber GameManager::CheckWinner() const
 {
     int alivePlayer = 0;
@@ -301,7 +314,8 @@ void ClientGameManager::SpawnPlayer(net::PlayerNumber playerNumber, Vec2f positi
     const auto& config = BasicEngine::GetInstance()->config;
     if (shipTextureId_ == INVALID_TEXTURE_ID)
     {
-        shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ship.png");
+        /*shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ship.png");*/
+        shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/redMotorcycle.png");
     }
     spriteManager_.AddComponent(entity);
     spriteManager_.SetTexture(entity, shipTextureId_);
@@ -327,6 +341,21 @@ Entity ClientGameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f posi
     return entity;
 }
 
+//Entity ClientGameManager::SpawnPlatform(Vec2f position)
+//{
+//    const auto entity = GameManager::SpawnPlatform(position);
+//    const auto& config = BasicEngine::GetInstance()->config;
+//    if (platformTextureID_ == INVALID_TEXTURE_ID)
+//    {
+//       platformTextureID_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/bullet.png");
+//    }
+//    spriteManager_.AddComponent(entity);
+//    spriteManager_.SetTexture(entity, platformTextureID_);
+//    auto sprite = spriteManager_.GetComponent(entity);
+//    spriteManager_.SetComponent(entity, sprite);
+//    return entity;
+//}
+	
 
 void ClientGameManager::FixedUpdate()
 {

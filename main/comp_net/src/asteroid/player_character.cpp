@@ -78,7 +78,28 @@ namespace neko::asteroid
 
 
 
-
+        	 // william
+           /* if(!left&&!right&& playerBody.velocity.y >0)
+            {
+            	while(playerBody.velocity.y !=0.0f)
+            	{
+					playerBody.velocity.y -= 0.1f;
+            	}
+            }
+            else if (!left && !right && playerBody.velocity.y < 0)
+            {
+                playerBody.velocity.y += 0.1f;
+            }
+            else if (!left && !right && playerBody.velocity.x > 0)
+            {
+                playerBody.velocity.x -= 0.1f;
+            }
+            else if (!left && !right && playerBody.velocity.x < 0)
+            {
+                playerBody.velocity.x += 0.1f;
+            }*/
+            // William
+        	
             // playerBody.velocity += dir * dt.count();
             playerBody.velocity.y += jump;
             playerBody.velocity.x += dir * dt.count();
