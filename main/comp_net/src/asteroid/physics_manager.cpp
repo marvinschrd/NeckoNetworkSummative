@@ -67,6 +67,22 @@ namespace neko::asteroid
             }
             body.position += body.velocity * dt.count();
             body.rotation += body.angularVelocity * dt.count();
+
+            if(body.position.y <=-1.0f) //stop them from falling out of screen
+            {
+                body.position.y = -1.0f;
+            }
+
+        	// respawn player on the other side when going offscreen right or left
+        	if(body.position.x>5.0f && body.velocity.x >0.1f) 
+        	{
+                body.position.x = -5.0f;
+        	}
+            if (body.position.x < -5.0f && body.velocity.x < 0.1f) 
+            {
+                body.position.x = 5.0f;
+            }
+        	
             bodyManager_.SetComponent(entity, body);
         }
         for (Entity entity = 0; entity < entityManager_.get().GetEntitiesSize(); entity++)

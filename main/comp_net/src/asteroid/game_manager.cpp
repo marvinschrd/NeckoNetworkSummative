@@ -160,7 +160,8 @@ ClientGameManager::ClientGameManager(PacketSenderInterface& packetSenderInterfac
 
 void ClientGameManager::Init()
 {
-    camera_.position = Vec3f::back;
+   camera_.position = Vec3f::back;
+    /*camera_.position = Vec3f(0, 1, -1);*/
     camera_.WorldLookAt(Vec3f::zero);
     camera_.nearPlane = 0.0f;
     camera_.farPlane = 2.0f;
@@ -258,7 +259,7 @@ void ClientGameManager::Update(seconds dt)
                 ).count();
             if (ms < startingTime_)
             {
-                const std::string countDownText = fmt::format("Starts jousting in {}", ((startingTime_ - ms) / 1000 + 1));
+                const std::string countDownText = fmt::format("Jousting in {}", ((startingTime_ - ms) / 1000 + 1));
                 fontManager_.RenderText(fontId_, countDownText, Vec2f::zero, TextAnchor::CENTER_LEFT, 1.0f, Color4(Color::white, 1.0f));
             }
         }
@@ -272,7 +273,7 @@ void ClientGameManager::Update(seconds dt)
             const auto playerEntity = GetEntityFromPlayerNumber(playerNumber);
             health += fmt::format("P{} points : {} ",playerNumber+1,playerManager.GetComponent(playerEntity).health);
         }
-        fontManager_.RenderText(fontId_, health, Vec2f(0.0f, -40.0f), TextAnchor::TOP_LEFT, 0.75f, Color4(Color::white, 1.0f));
+        fontManager_.RenderText(fontId_, health, Vec2f(0.0f, 50.0f), TextAnchor::TOP_LEFT, 0.75f, Color4(Color::white, 1.0f));
     }
     textureManager_.Update(dt);
     spriteManager_.Update(dt);

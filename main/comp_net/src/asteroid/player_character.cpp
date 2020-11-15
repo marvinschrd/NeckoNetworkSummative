@@ -24,6 +24,7 @@
 #include "asteroid/player_character.h"
 #include "asteroid/game_manager.h"
 
+   
 namespace neko::asteroid
 {
 
@@ -36,7 +37,10 @@ namespace neko::asteroid
 
     }
     bool canFly = true;
+    bool stopping = false;
 
+	
+	
     void PlayerCharacterManager::FixedUpdate(seconds dt)
     {
         for (Entity playerEntity = 0; playerEntity < entityManager_.get().GetEntitiesSize(); playerEntity++)
@@ -74,8 +78,28 @@ namespace neko::asteroid
             //  playerBody.velocity += acceleration * dt.count();
 
             float jump = ((up ? 0.9f : -0.5f));
-            float dir = ((left ? 3.0f : 0.0f) + (right ? -3.0f : 0.0f));
+        	
+			float dir = ((left ? 3.0f : 0.0f) + (right ? -3.0f : 0.0f));	
 
+           /* if(left && playerBody.velocity.x >0.0f)
+            {
+                stopping = true;
+                playerBody.velocity.x -= 0.1f *dt.count();
+            	if(playerBody.velocity.x<=0.0f)
+            	{
+                    stopping = false;
+            	}
+            }*/
+
+        	/*if(right && playerBody.velocity.x <= 0.0f)
+        	{
+                stopping = true;
+                playerBody.velocity.x += 0.1f *dt.count();
+                if (playerBody.velocity.x >= 0.0f)
+                {
+                    stopping = false;
+                }
+        	}*/
 
 
         	 // william
@@ -102,7 +126,10 @@ namespace neko::asteroid
         	
             // playerBody.velocity += dir * dt.count();
             playerBody.velocity.y += jump;
-            playerBody.velocity.x += dir * dt.count();
+            if (!stopping)
+            {
+				playerBody.velocity.x += dir * dt.count();   
+            }
 
             physicsManager_.get().SetBody(playerEntity, playerBody);
 
