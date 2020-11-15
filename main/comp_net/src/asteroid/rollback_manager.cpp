@@ -315,53 +315,15 @@ net::PlayerInput RollbackManager::GetInputAtFrame(net::PlayerNumber playerNumber
 
 void RollbackManager::OnCollision(Entity entity1, Entity entity2)
 {
-    std::function<void(const PlayerCharacter&, Entity, const Bullet&, Entity)> ManageCollision =
-        [this](const auto& player, auto playerEntity, const auto& bullet, auto bulletEntity)
-    {
-        if (player.playerNumber != bullet.playerNumber)
-        {
-            gameManager_.DestroyBullet(bulletEntity);
-            //lower health point
-            auto playerCharacter = currentPlayerManager_.GetComponent(playerEntity);
-            if (playerCharacter.invincibilityTime <= 0.0f)
-            {
-                playerCharacter.health--;
-                playerCharacter.invincibilityTime = playerInvincibilityPeriod;
-            }
-            currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
-        }
-    };
-    if (entityManager_.HasComponent(entity1, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
-        entityManager_.HasComponent(entity2, EntityMask(ComponentType::BULLET)))
-    {
-        const auto& player = currentPlayerManager_.GetComponent(entity1);
-        const auto& bullet = currentBulletManager_.GetComponent(entity2);
-        ManageCollision(player, entity1, bullet, entity2);
-
-    }
-    if (entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
-        entityManager_.HasComponent(entity1, EntityMask(ComponentType::BULLET)))
-    {
-        const auto& player = currentPlayerManager_.GetComponent(entity2);
-        const auto& bullet = currentBulletManager_.GetComponent(entity1);
-        ManageCollision(player, entity2, bullet, entity1);
-    }
-    //
-    //
-    //
-    //
-
-
-	
-    //std::function<void(const PlayerCharacter&, Entity, const PlayerCharacter&, Entity)> ManageCollision =
-    //    [this](const auto& player, auto playerEntity, const auto& otherPlayer, auto otherPlayerEntity)
+    //std::function<void(const PlayerCharacter&, Entity, const Bullet&, Entity)> ManageCollision =
+    //    [this](const auto& player, auto playerEntity, const auto& bullet, auto bulletEntity)
     //{
-    //    if (player.playerNumber != otherPlayer.playerNumber)
+    //    if (player.playerNumber != bullet.playerNumber)
     //    {
-    //       // gameManager_.DestroyBullet(bulletEntity);
+    //        gameManager_.DestroyBullet(bulletEntity);
     //        //lower health point
     //        auto playerCharacter = currentPlayerManager_.GetComponent(playerEntity);
-    //        if (playerCharacter.invincibilityTime <= 0.0f&& playerCharacter.)
+    //        if (playerCharacter.invincibilityTime <= 0.0f)
     //        {
     //            playerCharacter.health--;
     //            playerCharacter.invincibilityTime = playerInvincibilityPeriod;
@@ -369,13 +331,61 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
     //        currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
     //    }
     //};
+	
     //if (entityManager_.HasComponent(entity1, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
-    //    entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)))
+    //    entityManager_.HasComponent(entity2, EntityMask(ComponentType::BULLET)))
     //{
     //    const auto& player = currentPlayerManager_.GetComponent(entity1);
     //    const auto& bullet = currentBulletManager_.GetComponent(entity2);
     //    ManageCollision(player, entity1, bullet, entity2);
 
+    //}
+    //if (entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
+    //    entityManager_.HasComponent(entity1, EntityMask(ComponentType::BULLET)))
+    //{
+    //    const auto& player = currentPlayerManager_.GetComponent(entity2);
+    //    const auto& bullet = currentBulletManager_.GetComponent(entity1);
+    //    ManageCollision(player, entity2, bullet, entity1);
+    //}
+    //
+    //
+    //
+    //
+
+
+	
+    std::function<void(const PlayerCharacter&, Entity, const PlayerCharacter&, Entity)> ManageCollision =
+        [this](const auto& player, auto playerEntity, const auto& otherPlayer, auto otherPlayerEntity)
+    {
+        if (player.playerNumber != otherPlayer.playerNumber)
+        {
+           // gameManager_.DestroyBullet(bulletEntity);
+            //lower health point
+            auto playerCharacter = currentPlayerManager_.GetComponent(playerEntity);
+            if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y)
+            {
+                playerCharacter.health--;
+                playerCharacter.invincibilityTime = playerInvincibilityPeriod;
+            }
+            currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
+        }
+    };
+     if (entityManager_.HasComponent(entity1, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
+        entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)))
+    {
+        const auto& player1 = currentPlayerManager_.GetComponent(entity1);
+        const auto& player2 = currentPlayerManager_.GetComponent(entity2);
+        ManageCollision(player1, entity1, player2, entity2);
+    }
+
+     if (entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
+         entityManager_.HasComponent(entity1, EntityMask(ComponentType::PLAYER_CHARACTER)))
+     {
+         const auto& player1 = currentPlayerManager_.GetComponent(entity2);
+         const auto& player2 = currentPlayerManager_.GetComponent(entity1);
+         ManageCollision(player1, entity2, player2, entity1);
+     }
+	
     //}
     //if (entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
     //    entityManager_.HasComponent(entity1, EntityMask(ComponentType::BULLET)))

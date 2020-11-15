@@ -273,7 +273,7 @@ void ClientGameManager::Update(seconds dt)
             const auto playerEntity = GetEntityFromPlayerNumber(playerNumber);
             health += fmt::format("P{} points : {} ",playerNumber+1,playerManager.GetComponent(playerEntity).health);
         }
-        fontManager_.RenderText(fontId_, health, Vec2f(0.0f, 50.0f), TextAnchor::TOP_LEFT, 0.75f, Color4(Color::white, 1.0f));
+        fontManager_.RenderText(fontId_, health, Vec2f(0.0f, 30.0f), TextAnchor::TOP_LEFT, 0.75f, Color4(Color::white, 1.0f));
     }
     textureManager_.Update(dt);
     spriteManager_.Update(dt);
