@@ -24,6 +24,7 @@
 #include <engine/conversion.h>
 #include "asteroid/rollback_manager.h"
 #include "asteroid/game_manager.h"
+#include <iostream>
 
 #ifdef EASY_PROFILE_USE
 #include "easy/profiler.h"
@@ -359,6 +360,7 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
     {
         if (player.playerNumber != otherPlayer.playerNumber)
         {
+            //std::cout << "COLLISION";
            // gameManager_.DestroyBullet(bulletEntity);
             //lower health point
             auto playerCharacter = currentPlayerManager_.GetComponent(playerEntity);
