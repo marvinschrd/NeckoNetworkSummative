@@ -131,13 +131,15 @@ namespace neko::asteroid
 				playerBody.velocity.x += dir * dt.count();   
             }
 
-            physicsManager_.get().SetBody(playerEntity, playerBody);
 
             if (playerCharacter.invincibilityTime > 0.0f)
             {
                 playerCharacter.invincibilityTime -= dt.count();
+                playerBody.velocity.x = 0;
+                playerBody.velocity.y = -1.0f;
                 SetComponent(playerEntity, playerCharacter);
             }
+            physicsManager_.get().SetBody(playerEntity, playerBody);
             //Check if cannot shoot, and increase shootingTime
             if (playerCharacter.shootingTime < playerShootingPeriod)
             {
