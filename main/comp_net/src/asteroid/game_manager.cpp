@@ -173,7 +173,6 @@ void ClientGameManager::Init()
 
     const auto& config = BasicEngine::GetInstance()->config;
     fontId_ = fontManager_.LoadFont(config.dataRootPath + "font/8-bit-hud.ttf", 36);
-
     GameManager::Init();
 }
 
@@ -213,7 +212,6 @@ void ClientGameManager::Update(seconds dt)
                 }
                 spriteManager_.SetComponent(entity, sprite);
             }
-
             if (entityManager_.HasComponent(entity, EntityMask(neko::ComponentType::TRANSFORM2D)))
             {
                 transformManager_.SetPosition(entity, rollbackManager_.GetTransformManager().GetPosition(entity));
@@ -318,7 +316,7 @@ void ClientGameManager::SpawnPlayer(net::PlayerNumber playerNumber, Vec2f positi
     if (shipTextureId_ == INVALID_TEXTURE_ID)
     {
         /*shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ship.png");*/
-        shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/redMotorcycle.png");
+        shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/circleWithSpike.png");
     }
     spriteManager_.AddComponent(entity);
     spriteManager_.SetTexture(entity, shipTextureId_);
@@ -466,6 +464,23 @@ void ClientGameManager::ConfirmValidateFrame(net::Frame newValidateFrame,
         }
     }
     rollbackManager_.ConfirmFrame(newValidateFrame, physicsStates);
+}
+
+void ClientGameManager::DrawLevel()
+{
+    const Entity entity = entityManager_.CreateEntity();
+    entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::PLATFORM));
+    transformManager_.AddComponent(entity);
+    transformManager_.SetPosition(entity, Vec2f(0,0));
+    transformManager_.SetScale(entity,Vec2f(3,3));
+    const auto& config = BasicEngine::GetInstance()->config;
+    if (backgroundTextureId_ == INVALID_TEXTURE_ID)
+    {
+        /*shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ship.png");*/
+        backgroundTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/backgroundStand.png");
+    }
+    spriteManager_.AddComponent(entity);
+    spriteManager_.SetTexture(entity,backgroundTextureId_);
 }
 
 void ClientGameManager::WinGame(net::PlayerNumber winner)

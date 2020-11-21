@@ -65,6 +65,7 @@ namespace neko::asteroid
             {
                 body.velocity.x = -5.0f;
             }
+        	
             body.position += body.velocity * dt.count();
             body.rotation += body.angularVelocity * dt.count();
 
@@ -82,7 +83,6 @@ namespace neko::asteroid
             {
                 body.position.x = 5.0f;
             }
-        	
             bodyManager_.SetComponent(entity, body);
         }
         for (Entity entity = 0; entity < entityManager_.get().GetEntitiesSize(); entity++)

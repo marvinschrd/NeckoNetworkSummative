@@ -64,7 +64,7 @@ const std::array<Vec2f, std::max(4u, maxPlayerNmb)> spawnPositions
 
 const std::array<degree_t, std::max(4u, maxPlayerNmb)> spawnRotations{
     degree_t(0.0f),
-    degree_t(0.0f),
+    degree_t(180.0f),
     degree_t(-90.0f),
     degree_t(90.0f)
 };

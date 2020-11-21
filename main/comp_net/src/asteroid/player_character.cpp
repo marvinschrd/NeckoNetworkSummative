@@ -38,7 +38,8 @@ namespace neko::asteroid
     }
     bool canFly = true;
     bool stopping = false;
-
+    bool facingRight = false;
+    bool facingLeft = false;
 	
 	
     void PlayerCharacterManager::FixedUpdate(seconds dt)
@@ -51,17 +52,44 @@ namespace neko::asteroid
             auto playerBody = physicsManager_.get().GetBody(playerEntity);
             auto playerCharacter = GetComponent(playerEntity);
             const auto input = playerCharacter.input;
-
             const bool right = input & PlayerInput::RIGHT;
             const bool left = input & PlayerInput::LEFT;
             const bool up = input & PlayerInput::UP;
             const bool down = input & PlayerInput::DOWN;
-
             float jumpforce = 0.5f;
+
+			if(playerCharacter.playerNumber == 1)
+			{
+			  if(playerBody.rotation == degree_t(0) && right)
+				 {
+					playerBody.rotation = degree_t(180);
+					physicsManager_.get().SetBody(playerEntity, playerBody);
+				 }
+			  else if(playerBody.rotation == degree_t(180) && left)
+				{
+				  playerBody.rotation = degree_t(0);
+				  physicsManager_.get().SetBody(playerEntity, playerBody);
+				}
+				
+			}
+			else
+			{
+                if (playerBody.rotation == degree_t(180) && left)
+                {
+                    playerBody.rotation = degree_t(0);
+                    physicsManager_.get().SetBody(playerEntity, playerBody);
+                }
+                else if (playerBody.rotation == degree_t(0) && right)
+                {
+                    playerBody.rotation = degree_t(180);
+                    physicsManager_.get().SetBody(playerEntity, playerBody);
+                }
+			}
+        	
             /*auto jump = Vec2f::up;
             jump = Vec2f(playerBody.velocity.x, ((up ? 0.1f: -0.05f)));*/
 
-
+            
             //const auto angularVelocity = ((left ? 1.0f : 0.0f) + (right ? -1.0f : 0.0f)) * playerAngularSpeed;
 
             //playerBody.angularVelocity = angularVelocity;
@@ -132,11 +160,11 @@ namespace neko::asteroid
             }
 
 
-            if (playerCharacter.invincibilityTime > 0.0f)
+            if (playerCharacter.invincibilityTime > 0.0f) //decrease invincibility timer and make player fall
             {
                 playerCharacter.invincibilityTime -= dt.count();
                 playerBody.velocity.x = 0;
-                playerBody.velocity.y = -1.0f;
+                playerBody.velocity.y = -2.0f;
                 SetComponent(playerEntity, playerCharacter);
             }
             physicsManager_.get().SetBody(playerEntity, playerBody);

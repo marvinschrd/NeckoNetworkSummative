@@ -99,6 +99,9 @@ public:
 	void SetPlayerInput(net::PlayerNumber playerNumber, net::PlayerInput playerInput, std::uint32_t inputFrame) override;
     void DrawImGui() override;
     void ConfirmValidateFrame(net::Frame newValidateFrame, const std::array<PhysicsState, maxPlayerNmb>& physicsStates);
+
+	void DrawLevel();
+	
 	[[nodiscard]] net::PlayerNumber GetPlayerNumber() const { return clientPlayer_; }
     void WinGame(net::PlayerNumber winner) override;
     [[nodiscard]] std::uint32_t GetState() const {return state_;}
@@ -116,6 +119,7 @@ protected:
 
     TextureId shipTextureId_ = INVALID_TEXTURE_ID;
 	TextureId platformTextureID_ = INVALID_TEXTURE_ID;
+	TextureId backgroundTextureId_ = INVALID_TEXTURE_ID;
     TextureId bulletTextureId_ = INVALID_TEXTURE_ID;
     FontId fontId_ = INVALID_FONT_ID;
     std::mutex renderMutex_;
