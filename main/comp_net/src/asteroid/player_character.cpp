@@ -38,8 +38,6 @@ namespace neko::asteroid
     }
     bool canFly = true;
     bool stopping = false;
-    bool facingRight = false;
-    bool facingLeft = false;
 	
 	
     void PlayerCharacterManager::FixedUpdate(seconds dt)
@@ -58,16 +56,27 @@ namespace neko::asteroid
             const bool down = input & PlayerInput::DOWN;
             float jumpforce = 0.5f;
 
+        	/*if(playerBody.rotation == degree_t(0))
+        	{
+                playerCharacter.facingRight = false;
+        	}
+            else
+            {
+                playerCharacter.facingRight = false;
+            }*/
+        	// Make the characters "flip" regarding their player number
 			if(playerCharacter.playerNumber == 1)
 			{
 			  if(playerBody.rotation == degree_t(0) && right)
 				 {
 					playerBody.rotation = degree_t(180);
+                   playerCharacter.facingRight = true;
 					physicsManager_.get().SetBody(playerEntity, playerBody);
 				 }
 			  else if(playerBody.rotation == degree_t(180) && left)
 				{
 				  playerBody.rotation = degree_t(0);
+                  playerCharacter.facingRight = false;
 				  physicsManager_.get().SetBody(playerEntity, playerBody);
 				}
 				
@@ -77,14 +86,17 @@ namespace neko::asteroid
                 if (playerBody.rotation == degree_t(180) && left)
                 {
                     playerBody.rotation = degree_t(0);
+                    //playerCharacter.facingRight = false;
                     physicsManager_.get().SetBody(playerEntity, playerBody);
                 }
                 else if (playerBody.rotation == degree_t(0) && right)
                 {
                     playerBody.rotation = degree_t(180);
+                   // playerCharacter.facingRight = true;
                     physicsManager_.get().SetBody(playerEntity, playerBody);
                 }
 			}
+
         	
             /*auto jump = Vec2f::up;
             jump = Vec2f(playerBody.velocity.x, ((up ? 0.1f: -0.05f)));*/

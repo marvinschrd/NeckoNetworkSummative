@@ -364,10 +364,26 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
            // gameManager_.DestroyBullet(bulletEntity);
             //lower health point
             auto playerCharacter = currentPlayerManager_.GetComponent(playerEntity);
+            auto otherPlayerCharacter = currentPlayerManager_.GetComponent(otherPlayerEntity);
+            auto playerBody = currentPhysicsManager_.GetBody(playerEntity);
+            auto otherPlayerBody = currentPhysicsManager_.GetBody(otherPlayerEntity);
             if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y)
             {
-                playerCharacter.health--;
-                playerCharacter.invincibilityTime = playerInvincibilityPeriod;
+            	if(playerBody.rotation.value() == 0 && otherPlayerBody.rotation.value() == 0 && playerBody.position.x > otherPlayerBody.position.x)
+            	{
+                    playerCharacter.health--;
+                    playerCharacter.invincibilityTime = playerInvincibilityPeriod;
+            	}
+                else if(playerBody.rotation.value() == 180 && otherPlayerBody.rotation.value() == 180 && playerBody.position.x < otherPlayerBody.position.x)
+                {
+                    playerCharacter.health--;
+                    playerCharacter.invincibilityTime = playerInvincibilityPeriod;
+                }
+                else if(playerBody.rotation != otherPlayerBody.rotation)
+                {
+                    playerCharacter.health--;
+                    playerCharacter.invincibilityTime = playerInvincibilityPeriod;
+                }
             }
             currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
         }
