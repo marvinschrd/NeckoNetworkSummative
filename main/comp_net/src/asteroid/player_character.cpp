@@ -36,10 +36,7 @@ namespace neko::asteroid
     {
 
     }
-    bool canFly = true;
-    bool stopping = false;
-	
-	
+   
     void PlayerCharacterManager::FixedUpdate(seconds dt)
     {
         for (Entity playerEntity = 0; playerEntity < entityManager_.get().GetEntitiesSize(); playerEntity++)
@@ -55,122 +52,39 @@ namespace neko::asteroid
             const bool up = input & PlayerInput::UP;
             const bool down = input & PlayerInput::DOWN;
             float jumpforce = 0.5f;
-
-        	/*if(playerBody.rotation == degree_t(0))
-        	{
-                playerCharacter.facingRight = false;
-        	}
-            else
-            {
-                playerCharacter.facingRight = false;
-            }*/
+        	
+            float jump = ((up ? 0.9f : -0.7f));
+			float dir = ((left ? 4.0f : 0.0f) + (right ? -4.0f : 0.0f));	
         	// Make the characters "flip" regarding their player number
 			if(playerCharacter.playerNumber == 1)
 			{
 			  if(playerBody.rotation == degree_t(0) && right)
-				 {
-					playerBody.rotation = degree_t(180);
-                   playerCharacter.facingRight = true;
-					physicsManager_.get().SetBody(playerEntity, playerBody);
-				 }
-			  else if(playerBody.rotation == degree_t(180) && left)
-				{
-				  playerBody.rotation = degree_t(0);
-                  playerCharacter.facingRight = false;
-				  physicsManager_.get().SetBody(playerEntity, playerBody);
-				}
-				
+			  {
+				playerBody.rotation = degree_t(180);
+				physicsManager_.get().SetBody(playerEntity, playerBody);
+			  }
+              else if (playerBody.rotation == degree_t(180) && left)
+              {
+                  playerBody.rotation = degree_t(0);
+                  physicsManager_.get().SetBody(playerEntity, playerBody);
+              }
 			}
 			else
 			{
                 if (playerBody.rotation == degree_t(180) && left)
                 {
                     playerBody.rotation = degree_t(0);
-                    //playerCharacter.facingRight = false;
                     physicsManager_.get().SetBody(playerEntity, playerBody);
                 }
                 else if (playerBody.rotation == degree_t(0) && right)
                 {
                     playerBody.rotation = degree_t(180);
-                   // playerCharacter.facingRight = true;
                     physicsManager_.get().SetBody(playerEntity, playerBody);
                 }
 			}
-
         	
-            /*auto jump = Vec2f::up;
-            jump = Vec2f(playerBody.velocity.x, ((up ? 0.1f: -0.05f)));*/
-
-            
-            //const auto angularVelocity = ((left ? 1.0f : 0.0f) + (right ? -1.0f : 0.0f)) * playerAngularSpeed;
-
-            //playerBody.angularVelocity = angularVelocity;
-
-           /* auto dir = Vec2f::up;
-            dir = dir.Rotate(-(playerBody.rotation + playerBody.angularVelocity * dt.count()));*/
-
-            /*auto dir = Vec2f();
-            dir = Vec2f(((left ? 0.2f : 0.0f) + (right ? -0.2f : 0.0f)), playerBody.velocity.y);*/
-
-            //  const auto acceleration = ((down ? -1.0f : 0.0f) + (up ? 1.0f : 0.0f)) * dir;
-              //const auto acceleration = ((left ? -1.0f : 0.0f) + (right ? 1.0f : 0.0f)) * dir ;
-
-            //  playerBody.velocity += acceleration * dt.count();
-
-            float jump = ((up ? 0.9f : -0.5f));
-        	
-			float dir = ((left ? 3.0f : 0.0f) + (right ? -3.0f : 0.0f));	
-
-           /* if(left && playerBody.velocity.x >0.0f)
-            {
-                stopping = true;
-                playerBody.velocity.x -= 0.1f *dt.count();
-            	if(playerBody.velocity.x<=0.0f)
-            	{
-                    stopping = false;
-            	}
-            }*/
-
-        	/*if(right && playerBody.velocity.x <= 0.0f)
-        	{
-                stopping = true;
-                playerBody.velocity.x += 0.1f *dt.count();
-                if (playerBody.velocity.x >= 0.0f)
-                {
-                    stopping = false;
-                }
-        	}*/
-
-
-        	 // william
-           /* if(!left&&!right&& playerBody.velocity.y >0)
-            {
-            	while(playerBody.velocity.y !=0.0f)
-            	{
-					playerBody.velocity.y -= 0.1f;
-            	}
-            }
-            else if (!left && !right && playerBody.velocity.y < 0)
-            {
-                playerBody.velocity.y += 0.1f;
-            }
-            else if (!left && !right && playerBody.velocity.x > 0)
-            {
-                playerBody.velocity.x -= 0.1f;
-            }
-            else if (!left && !right && playerBody.velocity.x < 0)
-            {
-                playerBody.velocity.x += 0.1f;
-            }*/
-            // William
-        	
-            // playerBody.velocity += dir * dt.count();
+            playerBody.velocity.x += dir * dt.count();
             playerBody.velocity.y += jump;
-            if (!stopping)
-            {
-				playerBody.velocity.x += dir * dt.count();   
-            }
-
 
             if (playerCharacter.invincibilityTime > 0.0f) //decrease invincibility timer and make player fall
             {
@@ -180,29 +94,6 @@ namespace neko::asteroid
                 SetComponent(playerEntity, playerCharacter);
             }
             physicsManager_.get().SetBody(playerEntity, playerBody);
-            //Check if cannot shoot, and increase shootingTime
-            if (playerCharacter.shootingTime < playerShootingPeriod)
-            {
-                playerCharacter.shootingTime += dt.count();
-                SetComponent(playerEntity, playerCharacter);
-            }
-            //Shooting mechanism
-           /* if (playerCharacter.shootingTime >= playerShootingPeriod)
-            {
-                if(input & PlayerInput::SHOOT)
-                {
-                    const auto currentPlayerSpeed = playerBody.velocity.Magnitude();
-                    const auto bulletVelocity = dir *
-                        ((Vec2f::Dot(playerBody.velocity, dir) > 0.0f ? currentPlayerSpeed : 0.0f)
-                        + bulletSpeed);
-                    const auto bulletPosition = playerBody.position + dir * 0.5f + playerBody.velocity * dt.count();
-                    gameManager_.get().SpawnBullet(playerCharacter.playerNumber,
-                                                   bulletPosition,
-                                                   bulletVelocity);
-                    playerCharacter.shootingTime = 0.0f;
-                    SetComponent(playerEntity, playerCharacter);
-                }
-            }*/
         }
     }
 

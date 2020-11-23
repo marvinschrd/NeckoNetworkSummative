@@ -48,31 +48,22 @@ namespace neko::asteroid
             if (!entityManager_.get().HasComponent(entity, EntityMask(neko::ComponentType::BODY2D)))
                 continue;
             auto body = bodyManager_.GetComponent(entity);
-            //body.velocity.y += -0.000981f;
-            if (body.velocity.y <= -2.0f)
-            {
-                body.velocity.y = -2.0f;
-            }
-            if (body.velocity.y >= 3.0f)
-            {
-                body.velocity.y = 3.0f;
-            }
-            if (body.velocity.x >= 5.0f)
-            {
-                body.velocity.x = 5.0f;
-            }
-            if (body.velocity.x <= -5.0f)
-            {
-                body.velocity.x = -5.0f;
-            }
+            if (body.velocity.y <= -3.0f) {body.velocity.y = -3.0f;}
+            if (body.velocity.y >= 4.0f) {body.velocity.y = 4.0f;}
+            if (body.velocity.x >= 6.0f) {body.velocity.x = 6.0f;}
+            if (body.velocity.x <= -6.0f) {body.velocity.x = -6.0f;}
         	
             body.position += body.velocity * dt.count();
             body.rotation += body.angularVelocity * dt.count();
 
-            if(body.position.y <=-1.0f) //stop them from falling out of screen
+            if(body.position.y <=-1.0f) //stop them from falling out of screen or going too high
             {
                 body.position.y = -1.0f;
             }
+        	if(body.position.y >= 5.0f)
+        	{
+                body.position.y = 5.0f;
+        	}
 
         	// respawn player on the other side when going offscreen right or left
         	if(body.position.x>5.0f && body.velocity.x >0.1f) 
@@ -101,7 +92,6 @@ namespace neko::asteroid
                     continue;
                 const Body& body1 = bodyManager_.GetComponent(entity);
                 const Box& box1 = boxManager_.GetComponent(entity);
-
                 const Body& body2 = bodyManager_.GetComponent(otherEntity);
                 const Box& box2 = boxManager_.GetComponent(otherEntity);
 

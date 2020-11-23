@@ -95,37 +95,6 @@ void GameManager::Validate(net::Frame newValidateFrame)
     }
     rollbackManager_.ValidateFrame(newValidateFrame);
 }
-
-Entity GameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity)
-{
-    const Entity entity = entityManager_.CreateEntity();
-    entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::BULLET));
-    transformManager_.AddComponent(entity);
-    transformManager_.SetPosition(entity, position);
-    transformManager_.SetScale(entity, Vec2f::one * bulletScale);
-    transformManager_.SetRotation(entity, degree_t(0.0f));
-    transformManager_.UpdateDirtyComponent(entity);
-    rollbackManager_.SpawnBullet(playerNumber, entity, position, velocity);
-    return entity;
-}
-
-void GameManager::DestroyBullet(Entity entity)
-{
-    rollbackManager_.DestroyEntity(entity);
-}
-
-//Entity GameManager::SpawnPlatform(Vec2f position)
-//{
-//    const Entity entity = entityManager_.CreateEntity();
-//    entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::PLATFORM));
-//    transformManager_.AddComponent(entity);
-//    transformManager_.SetPosition(entity, position);
-//    transformManager_.SetScale(entity, Vec2f::one * platformScale);
-//    transformManager_.SetRotation(entity, degree_t(0.0f));
-//    transformManager_.UpdateDirtyComponent(entity);
-//    rollbackManager_.SpawnPlatorm(entity, position);
-//}
-
 	
 net::PlayerNumber GameManager::CheckWinner() const
 {
@@ -173,6 +142,7 @@ void ClientGameManager::Init()
 
     const auto& config = BasicEngine::GetInstance()->config;
     fontId_ = fontManager_.LoadFont(config.dataRootPath + "font/8-bit-hud.ttf", 36);
+    DrawLevel();
     GameManager::Init();
 }
 
@@ -313,51 +283,17 @@ void ClientGameManager::SpawnPlayer(net::PlayerNumber playerNumber, Vec2f positi
     GameManager::SpawnPlayer(playerNumber, position, rotation);
     const auto entity = GetEntityFromPlayerNumber(playerNumber);
     const auto& config = BasicEngine::GetInstance()->config;
-    if (shipTextureId_ == INVALID_TEXTURE_ID)
+    if (PlayerTextureId_ == INVALID_TEXTURE_ID)
     {
-        /*shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ship.png");*/
-        shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/circleWithSpike.png");
+        PlayerTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/circleWithSpike.png");
     }
     spriteManager_.AddComponent(entity);
-    spriteManager_.SetTexture(entity, shipTextureId_);
+    spriteManager_.SetTexture(entity, PlayerTextureId_);
     auto sprite = spriteManager_.GetComponent(entity);
     sprite.color = playerColors[playerNumber];
     spriteManager_.SetComponent(entity, sprite);
-
 }
-
-Entity ClientGameManager::SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity)
-{
-    const auto entity = GameManager::SpawnBullet(playerNumber, position, velocity);
-    const auto& config = BasicEngine::GetInstance()->config;
-    if (bulletTextureId_ == INVALID_TEXTURE_ID)
-    {
-        bulletTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/bullet.png");
-    }
-    spriteManager_.AddComponent(entity);
-    spriteManager_.SetTexture(entity, bulletTextureId_);
-    auto sprite = spriteManager_.GetComponent(entity);
-    sprite.color = playerColors[playerNumber];
-    spriteManager_.SetComponent(entity, sprite);
-    return entity;
-}
-
-//Entity ClientGameManager::SpawnPlatform(Vec2f position)
-//{
-//    const auto entity = GameManager::SpawnPlatform(position);
-//    const auto& config = BasicEngine::GetInstance()->config;
-//    if (platformTextureID_ == INVALID_TEXTURE_ID)
-//    {
-//       platformTextureID_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/bullet.png");
-//    }
-//    spriteManager_.AddComponent(entity);
-//    spriteManager_.SetTexture(entity, platformTextureID_);
-//    auto sprite = spriteManager_.GetComponent(entity);
-//    spriteManager_.SetComponent(entity, sprite);
-//    return entity;
-//}
 	
-
 void ClientGameManager::FixedUpdate()
 {
 #ifdef EASY_PROFILE_USE
@@ -472,11 +408,11 @@ void ClientGameManager::DrawLevel()
     entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::PLATFORM));
     transformManager_.AddComponent(entity);
     transformManager_.SetPosition(entity, Vec2f(0,0));
-    transformManager_.SetScale(entity,Vec2f(3,3));
+    transformManager_.SetScale(entity,Vec2f(10,10));
     const auto& config = BasicEngine::GetInstance()->config;
     if (backgroundTextureId_ == INVALID_TEXTURE_ID)
     {
-        /*shipTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ship.png");*/
+        /*PlayerTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ship.png");*/
         backgroundTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/backgroundStand.png");
     }
     spriteManager_.AddComponent(entity);

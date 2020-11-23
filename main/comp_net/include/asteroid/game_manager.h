@@ -47,9 +47,6 @@ public:
 	void Update(seconds dt) override;
 	void Destroy() override;
 	virtual void SpawnPlayer(net::PlayerNumber playerNumber, Vec2f position, degree_t rotation);
-	virtual Entity SpawnBullet(net::PlayerNumber, Vec2f position, Vec2f velocity);
-	//virtual Entity SpawnPlatform(Vec2f position);
-	virtual void DestroyBullet(Entity entity);
 	[[nodiscard]] Entity GetEntityFromPlayerNumber(net::PlayerNumber playerNumber) const;
 	[[nodiscard]] net::Frame GetCurrentFrame() const { return currentFrame_; }
 	[[nodiscard]] net::Frame GetLastValidateFrame() const { return rollbackManager_.GetLastValidateFrame(); }
@@ -93,8 +90,6 @@ public:
 	void SetClientPlayer(net::PlayerNumber clientPlayer) { clientPlayer_ = clientPlayer; }
 	[[nodiscard]] const Camera2D& GetCamera() const { return camera_; }
 	void SpawnPlayer(net::PlayerNumber playerNumber, Vec2f position, degree_t rotation) override;
-	Entity SpawnBullet(net::PlayerNumber playerNumber, Vec2f position, Vec2f velocity) override;
-	//Entity SpawnPlatform(Vec2f position) override;
 	void FixedUpdate();
 	void SetPlayerInput(net::PlayerNumber playerNumber, net::PlayerInput playerInput, std::uint32_t inputFrame) override;
     void DrawImGui() override;
@@ -117,10 +112,8 @@ protected:
     unsigned long long startingTime_ = 0;
 	std::uint32_t state_ = 0;
 
-    TextureId shipTextureId_ = INVALID_TEXTURE_ID;
-	TextureId platformTextureID_ = INVALID_TEXTURE_ID;
+    TextureId PlayerTextureId_ = INVALID_TEXTURE_ID;
 	TextureId backgroundTextureId_ = INVALID_TEXTURE_ID;
-    TextureId bulletTextureId_ = INVALID_TEXTURE_ID;
     FontId fontId_ = INVALID_FONT_ID;
     std::mutex renderMutex_;
 };

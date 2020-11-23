@@ -316,58 +316,17 @@ net::PlayerInput RollbackManager::GetInputAtFrame(net::PlayerNumber playerNumber
 
 void RollbackManager::OnCollision(Entity entity1, Entity entity2)
 {
-    //std::function<void(const PlayerCharacter&, Entity, const Bullet&, Entity)> ManageCollision =
-    //    [this](const auto& player, auto playerEntity, const auto& bullet, auto bulletEntity)
-    //{
-    //    if (player.playerNumber != bullet.playerNumber)
-    //    {
-    //        gameManager_.DestroyBullet(bulletEntity);
-    //        //lower health point
-    //        auto playerCharacter = currentPlayerManager_.GetComponent(playerEntity);
-    //        if (playerCharacter.invincibilityTime <= 0.0f)
-    //        {
-    //            playerCharacter.health--;
-    //            playerCharacter.invincibilityTime = playerInvincibilityPeriod;
-    //        }
-    //        currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
-    //    }
-    //};
-	
-    //if (entityManager_.HasComponent(entity1, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
-    //    entityManager_.HasComponent(entity2, EntityMask(ComponentType::BULLET)))
-    //{
-    //    const auto& player = currentPlayerManager_.GetComponent(entity1);
-    //    const auto& bullet = currentBulletManager_.GetComponent(entity2);
-    //    ManageCollision(player, entity1, bullet, entity2);
-
-    //}
-    //if (entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
-    //    entityManager_.HasComponent(entity1, EntityMask(ComponentType::BULLET)))
-    //{
-    //    const auto& player = currentPlayerManager_.GetComponent(entity2);
-    //    const auto& bullet = currentBulletManager_.GetComponent(entity1);
-    //    ManageCollision(player, entity2, bullet, entity1);
-    //}
-    //
-    //
-    //
-    //
-
-
-	
     std::function<void(const PlayerCharacter&, Entity, const PlayerCharacter&, Entity)> ManageCollision =
         [this](const auto& player, auto playerEntity, const auto& otherPlayer, auto otherPlayerEntity)
     {
         if (player.playerNumber != otherPlayer.playerNumber)
         {
-            //std::cout << "COLLISION";
-           // gameManager_.DestroyBullet(bulletEntity);
             //lower health point
             auto playerCharacter = currentPlayerManager_.GetComponent(playerEntity);
             auto otherPlayerCharacter = currentPlayerManager_.GetComponent(otherPlayerEntity);
             auto playerBody = currentPhysicsManager_.GetBody(playerEntity);
             auto otherPlayerBody = currentPhysicsManager_.GetBody(otherPlayerEntity);
-            if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y)
+            if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y) // check positions of the two players to know if player can take damage or not
             {
             	if(playerBody.rotation.value() == 0 && otherPlayerBody.rotation.value() == 0 && playerBody.position.x > otherPlayerBody.position.x)
             	{
@@ -403,43 +362,7 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
          const auto& player2 = currentPlayerManager_.GetComponent(entity1);
          ManageCollision(player1, entity2, player2, entity1);
      }
-	
-    //}
-    //if (entityManager_.HasComponent(entity2, EntityMask(ComponentType::PLAYER_CHARACTER)) &&
-    //    entityManager_.HasComponent(entity1, EntityMask(ComponentType::BULLET)))
-    //{
-    //    const auto& player = currentPlayerManager_.GetComponent(entity2);
-    //    const auto& bullet = currentBulletManager_.GetComponent(entity1);
-    //    ManageCollision(player, entity2, bullet, entity1);
-    //}
 }
-
-
-void RollbackManager::SpawnBullet(net::PlayerNumber playerNumber, Entity entity, Vec2f position, Vec2f velocity)
-{
-    createdEntities_.push_back({ entity, testedFrame_ });
-
-    Body bulletBody;
-    bulletBody.position = position;
-    bulletBody.velocity = velocity;
-    Box bulletBox;
-    bulletBox.extends = Vec2f::one * bulletScale * 0.5f;
-
-    currentBulletManager_.AddComponent(entity);
-    currentBulletManager_.SetComponent(entity, { bulletPeriod, playerNumber });
-
-    currentPhysicsManager_.AddBody(entity);
-    currentPhysicsManager_.SetBody(entity, bulletBody);
-    currentPhysicsManager_.AddBox(entity);
-    currentPhysicsManager_.SetBox(entity, bulletBox);
-
-    currentTransformManager_.AddComponent(entity);
-    currentTransformManager_.SetPosition(entity, position);
-    currentTransformManager_.SetScale(entity, Vec2f::one * bulletScale);
-    currentTransformManager_.SetRotation(entity, degree_t(0.0f));
-    currentTransformManager_.UpdateDirtyComponent(entity);
-}
-
 void RollbackManager::DestroyEntity(Entity entity)
 {
     //we don't need to save a bullet that has been created in the time window
