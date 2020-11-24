@@ -36,9 +36,6 @@ const short playerHealth = 5;
 const float playerSpeed = 1.0f;
 const degree_t playerAngularSpeed = degree_t(90.0f);
 const float playerShootingPeriod = 0.3f;
-const float bulletSpeed = 2.0f;
-const float bulletScale = 0.2f;
-const float bulletPeriod = 3.0f;
 const float platformScale = 1.0f;
 //const float playerInvincibilityPeriod = 1.5f;
 const float playerInvincibilityPeriod =3.0f;
@@ -72,7 +69,6 @@ const std::array<degree_t, std::max(4u, maxPlayerNmb)> spawnRotations{
 enum class ComponentType : EntityMask
 {
     PLAYER_CHARACTER = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE),
-    BULLET = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE) << 1u,
     ASTEROID = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE) << 2u,
     PLAYER_INPUT = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE) << 3u,
     DESTROYED = static_cast<EntityMask>(neko::ComponentType::OTHER_TYPE) << 4u,

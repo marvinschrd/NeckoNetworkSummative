@@ -28,7 +28,6 @@
 #include "asteroid/packet_type.h"
 #include "asteroid/physics_manager.h"
 #include "player_character.h"
-#include "bullet_manager.h"
 
 namespace neko::asteroid
 {
@@ -38,13 +37,6 @@ struct CreatedEntity
 {
     Entity entity = INVALID_ENTITY;
     net::Frame createdFrame = 0;
-};
-
-struct DestroyedBullet
-{
-    Bullet bullet;
-    Body body;
-    net::Frame destroyedFrame = 0;
 };
 
 class RollbackManager : public OnCollisionInterface
@@ -72,7 +64,6 @@ public:
     [[nodiscard]] const Transform2dManager& GetTransformManager() const { return currentTransformManager_; }
     [[nodiscard]] const PlayerCharacterManager& GetPlayerCharacterManager() const { return currentPlayerManager_; }
     void SpawnPlayer(net::PlayerNumber playerNumber, Entity entity, Vec2f position, degree_t rotation);
-    void SpawnBullet(net::PlayerNumber playerNumber, Entity entity, Vec2f position, Vec2f velocity);
     /**
      * \brief This function does not destroy the entity definitely, but puts the DESTROY flag
      */
@@ -89,10 +80,8 @@ private:
     Transform2dManager currentTransformManager_;
     PhysicsManager currentPhysicsManager_;
     PlayerCharacterManager currentPlayerManager_;
-    BulletManager currentBulletManager_;
     PhysicsManager lastValidatePhysicsManager_;
     PlayerCharacterManager lastValidatePlayerManager_;
-    BulletManager lastValidateBulletManager_;
 
 
     net::Frame lastValidateFrame_ = 0;

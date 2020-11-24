@@ -38,9 +38,8 @@ RollbackManager::RollbackManager(GameManager& gameManager, EntityManager& entity
     gameManager_(gameManager), entityManager_(entityManager),
     currentTransformManager_(entityManager),
     currentPhysicsManager_(entityManager), currentPlayerManager_(entityManager, currentPhysicsManager_, gameManager_),
-    currentBulletManager_(entityManager, gameManager),
     lastValidatePhysicsManager_(entityManager),
-    lastValidatePlayerManager_(entityManager, lastValidatePhysicsManager_, gameManager_), lastValidateBulletManager_(entityManager, gameManager)
+    lastValidatePlayerManager_(entityManager, lastValidatePhysicsManager_, gameManager_)
 {
     for (auto& input : inputs_)
     {
@@ -76,7 +75,6 @@ void RollbackManager::SimulateToCurrentFrame()
 
     createdEntities_.clear();
     //Revert the current game state to the last validated game state
-    currentBulletManager_ = lastValidateBulletManager_;
     currentPhysicsManager_ = lastValidatePhysicsManager_;
     currentPlayerManager_ = lastValidatePlayerManager_;
 
@@ -93,7 +91,6 @@ void RollbackManager::SimulateToCurrentFrame()
             currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
         }
         //Simulate one frame of the game
-        currentBulletManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPlayerManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPhysicsManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
     }
@@ -188,7 +185,6 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
         }
     }
     //We use the current game state as the temporary new validate game state
-    currentBulletManager_ = lastValidateBulletManager_;
     currentPhysicsManager_ = lastValidatePhysicsManager_;
     currentPlayerManager_ = lastValidatePlayerManager_;
 
@@ -206,7 +202,6 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
             currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
         }
         //We simulate one frame
-        currentBulletManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPlayerManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
         currentPhysicsManager_.FixedUpdate(seconds(GameManager::FixedPeriod));
     }
@@ -219,7 +214,6 @@ void RollbackManager::ValidateFrame(net::Frame newValidateFrame)
         }
     }
     //Copy back the new validate game state to the last validated game state
-    lastValidateBulletManager_ = currentBulletManager_;
     lastValidatePlayerManager_ = currentPlayerManager_;
     lastValidatePhysicsManager_ = currentPhysicsManager_;
     lastValidateFrame_ = newValidateFrame;
