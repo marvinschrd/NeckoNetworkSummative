@@ -48,17 +48,15 @@ namespace neko::asteroid
             if (!entityManager_.get().HasComponent(entity, EntityMask(neko::ComponentType::BODY2D)))
                 continue;
             auto body = bodyManager_.GetComponent(entity);
-            if (body.velocity.y <= -3.0f) {body.velocity.y = -3.0f;}
+            if (body.velocity.y <= -3.0f) {body.velocity.y = -3.0f;} // Stop players from going to fast in x or y
             if (body.velocity.y >= 4.0f) {body.velocity.y = 4.0f;}
             if (body.velocity.x >= 6.0f) {body.velocity.x = 6.0f;}
             if (body.velocity.x <= -6.0f) {body.velocity.x = -6.0f;}
         	
-            body.position += body.velocity * dt.count();
-            body.rotation += body.angularVelocity * dt.count();
 
-            if(body.position.y <=-1.0f) //stop them from falling out of screen or going too high
+            if(body.position.y <=-2.0f) //stop them from falling out of screen or going too high
             {
-                body.position.y = -1.0f;
+                body.position.y = -2.0f;
             }
         	if(body.position.y >= 5.0f)
         	{
@@ -74,6 +72,8 @@ namespace neko::asteroid
             {
                 body.position.x = 5.0f;
             }
+            body.position += body.velocity * dt.count();
+            body.rotation += body.angularVelocity * dt.count();
             bodyManager_.SetComponent(entity, body);
         }
         for (Entity entity = 0; entity < entityManager_.get().GetEntitiesSize(); entity++)

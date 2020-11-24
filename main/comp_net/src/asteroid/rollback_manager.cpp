@@ -326,24 +326,44 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
             auto otherPlayerCharacter = currentPlayerManager_.GetComponent(otherPlayerEntity);
             auto playerBody = currentPhysicsManager_.GetBody(playerEntity);
             auto otherPlayerBody = currentPhysicsManager_.GetBody(otherPlayerEntity);
-            if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y) // check positions of the two players to know if player can take damage or not
+        	
+            //
+        	//This bloc of code is used to make back attack possible but it will allow some hit to look like
+        	//you have been hit without your adversary facing you (wich is not the case) and will feel like an error
+        	//
+            //if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y) // check positions of the two players to know if player can take damage or not
+            //{
+            //	if(playerBody.rotation.value() == 0 && otherPlayerBody.rotation.value() == 0 && playerBody.position.x > otherPlayerBody.position.x)
+            //	{
+            //        playerCharacter.health--;
+            //        playerCharacter.invincibilityTime = playerInvincibilityPeriod;
+            //	}
+            //    else if(playerBody.rotation.value() == 180 && otherPlayerBody.rotation.value() == 180 && playerBody.position.x < otherPlayerBody.position.x)
+            //    {
+            //        playerCharacter.health--;
+            //        playerCharacter.invincibilityTime = playerInvincibilityPeriod;
+            //    }
+            //    else if(playerBody.rotation != otherPlayerBody.rotation)
+            //    {
+            //        playerCharacter.health--;
+            //        playerCharacter.invincibilityTime = playerInvincibilityPeriod;
+            //    }
+            //}
+
+            if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y)
             {
-            	if(playerBody.rotation.value() == 0 && otherPlayerBody.rotation.value() == 0 && playerBody.position.x > otherPlayerBody.position.x)
-            	{
+                if(playerBody.rotation.value() == 0 && otherPlayerBody.rotation.value() == 180)
+                {
                     playerCharacter.health--;
                     playerCharacter.invincibilityTime = playerInvincibilityPeriod;
-            	}
-                else if(playerBody.rotation.value() == 180 && otherPlayerBody.rotation.value() == 180 && playerBody.position.x < otherPlayerBody.position.x)
+                	
+                }
+                else if (playerBody.rotation.value() == 180 && otherPlayerBody.rotation.value() == 0)
                 {
                     playerCharacter.health--;
                     playerCharacter.invincibilityTime = playerInvincibilityPeriod;
                 }
-                else if(playerBody.rotation != otherPlayerBody.rotation)
-                {
-                    playerCharacter.health--;
-                    playerCharacter.invincibilityTime = playerInvincibilityPeriod;
-                }
-            }
+            }        	
             currentPlayerManager_.SetComponent(playerEntity, playerCharacter);
         }
     };

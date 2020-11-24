@@ -131,7 +131,6 @@ ClientGameManager::ClientGameManager(PacketSenderInterface& packetSenderInterfac
 void ClientGameManager::Init()
 {
    camera_.position = Vec3f::back;
-    /*camera_.position = Vec3f(0, 1, -1);*/
     camera_.WorldLookAt(Vec3f::zero);
     camera_.nearPlane = 0.0f;
     camera_.farPlane = 2.0f;
@@ -142,8 +141,8 @@ void ClientGameManager::Init()
 
     const auto& config = BasicEngine::GetInstance()->config;
     fontId_ = fontManager_.LoadFont(config.dataRootPath + "font/8-bit-hud.ttf", 36);
-    DrawLevel();
     GameManager::Init();
+    DrawLevel();
 }
 
 void ClientGameManager::Update(seconds dt)
@@ -240,10 +239,9 @@ void ClientGameManager::Update(seconds dt)
         for(net::PlayerNumber playerNumber = 0; playerNumber < maxPlayerNmb; playerNumber++)
         {
             const auto playerEntity = GetEntityFromPlayerNumber(playerNumber);
-            health += fmt::format("P{} points : {} ",playerNumber+1,playerManager.GetComponent(playerEntity).health);
+            health += fmt::format("P{} Health : {} ",playerNumber+1,playerManager.GetComponent(playerEntity).health);
         }
         fontManager_.RenderText(fontId_, health, Vec2f(0.0f,-40.0f), TextAnchor::TOP_LEFT, 0.5f, Color4(Color::white, 1.0f));
-       // fontManager_.RenderText(fontId_, health, Vec2f(0.0f, 2.0f), TextAnchor::TOP_LEFT, 0.75f, Color4(Color::white, 1.0f));
     }
     textureManager_.Update(dt);
     spriteManager_.Update(dt);
@@ -406,13 +404,13 @@ void ClientGameManager::DrawLevel()
 {
     const Entity entity = entityManager_.CreateEntity();
     entityManager_.AddComponentType(entity, static_cast<EntityMask>(ComponentType::PLATFORM));
+    entityManager_.AddComponentType(entity, EntityMask(neko::ComponentType::SPRITE2D));
     transformManager_.AddComponent(entity);
     transformManager_.SetPosition(entity, Vec2f(0,0));
     transformManager_.SetScale(entity,Vec2f(10,10));
     const auto& config = BasicEngine::GetInstance()->config;
     if (backgroundTextureId_ == INVALID_TEXTURE_ID)
     {
-        /*PlayerTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/ship.png");*/
         backgroundTextureId_ = textureManager_.LoadTexture(config.dataRootPath + "sprites/asteroid/backgroundStand.png");
     }
     spriteManager_.AddComponent(entity);

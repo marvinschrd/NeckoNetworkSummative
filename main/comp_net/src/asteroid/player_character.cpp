@@ -51,11 +51,11 @@ namespace neko::asteroid
             const bool left = input & PlayerInput::LEFT;
             const bool up = input & PlayerInput::UP;
             const bool down = input & PlayerInput::DOWN;
-            float jumpforce = 0.5f;
         	
             float jump = ((up ? 0.9f : -0.7f));
-			float dir = ((left ? 4.0f : 0.0f) + (right ? -4.0f : 0.0f));	
+			float dir = ((left ? 5.0f : 0.0f) + (right ? -5.0f : 0.0f));	
         	// Make the characters "flip" regarding their player number
+        	
 			if(playerCharacter.playerNumber == 1)
 			{
 			  if(playerBody.rotation == degree_t(0) && right)
@@ -90,7 +90,7 @@ namespace neko::asteroid
             {
                 playerCharacter.invincibilityTime -= dt.count();
                 playerBody.velocity.x = 0;
-                playerBody.velocity.y = -2.0f;
+                playerBody.velocity.y = -3.0f;
                 SetComponent(playerEntity, playerCharacter);
             }
             physicsManager_.get().SetBody(playerEntity, playerBody);
