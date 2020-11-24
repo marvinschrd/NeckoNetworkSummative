@@ -327,10 +327,10 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
             auto playerBody = currentPhysicsManager_.GetBody(playerEntity);
             auto otherPlayerBody = currentPhysicsManager_.GetBody(otherPlayerEntity);
         	
-            //
-        	//This bloc of code is used to make back attack possible but it will allow some hit to look like
-        	//you have been hit without your adversary facing you (wich is not the case) and will feel like an error
-        	//
+            
+        	/*This bloc of code is used to make back attack possible but it will allow some hit to look like
+        	you have been hit without your adversary facing you (wich is not the case) and will feel like an error*/
+        	
             //if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y) // check positions of the two players to know if player can take damage or not
             //{
             //	if(playerBody.rotation.value() == 0 && otherPlayerBody.rotation.value() == 0 && playerBody.position.x > otherPlayerBody.position.x)
@@ -350,7 +350,7 @@ void RollbackManager::OnCollision(Entity entity1, Entity entity2)
             //    }
             //}
 
-            if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(playerEntity).position.y < currentPhysicsManager_.GetBody(otherPlayerEntity).position.y)
+            if (playerCharacter.invincibilityTime <= 0.0f && currentPhysicsManager_.GetBody(otherPlayerEntity).position.y > currentPhysicsManager_.GetBody(playerEntity).position.y+0.4f)
             {
                 if(playerBody.rotation.value() == 0 && otherPlayerBody.rotation.value() == 180)
                 {

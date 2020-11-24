@@ -48,7 +48,7 @@ namespace neko::asteroid
             if (!entityManager_.get().HasComponent(entity, EntityMask(neko::ComponentType::BODY2D)))
                 continue;
             auto body = bodyManager_.GetComponent(entity);
-            if (body.velocity.y <= -3.0f) {body.velocity.y = -3.0f;} // Stop players from going to fast in x or y
+            if (body.velocity.y <= -3.0f) {body.velocity.y = -3.0f;} // Stop players from going too fast in x or y
             if (body.velocity.y >= 4.0f) {body.velocity.y = 4.0f;}
             if (body.velocity.x >= 6.0f) {body.velocity.x = 6.0f;}
             if (body.velocity.x <= -6.0f) {body.velocity.x = -6.0f;}

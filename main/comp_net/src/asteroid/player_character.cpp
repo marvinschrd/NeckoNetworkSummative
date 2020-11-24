@@ -38,7 +38,7 @@ namespace neko::asteroid
     }
    
     void PlayerCharacterManager::FixedUpdate(seconds dt)
-    {
+    {	
         for (Entity playerEntity = 0; playerEntity < entityManager_.get().GetEntitiesSize(); playerEntity++)
         {
             if (!entityManager_.get().HasComponent(playerEntity,
@@ -50,12 +50,11 @@ namespace neko::asteroid
             const bool right = input & PlayerInput::RIGHT;
             const bool left = input & PlayerInput::LEFT;
             const bool up = input & PlayerInput::UP;
-            const bool down = input & PlayerInput::DOWN;
         	
             float jump = ((up ? 0.9f : -0.7f));
-			float dir = ((left ? 5.0f : 0.0f) + (right ? -5.0f : 0.0f));	
-        	// Make the characters "flip" regarding their player number
+			float dir = ((left ? 5.0f : 0.0f) + (right ? -5.0f : 0.0f));
         	
+        	// Make the characters "flip" regarding their player number
 			if(playerCharacter.playerNumber == 1)
 			{
 			  if(playerBody.rotation == degree_t(0) && right)
